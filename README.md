@@ -10,6 +10,7 @@ $ luarocks install promise-lua
 ## Usage
 ```lua
 Promise(function(resolve, reject)
+    -- do stuff after 1000 milliseconds.
     setTimeout(function()
         math.randomseed(os.time())
         local num = math.random(10)
