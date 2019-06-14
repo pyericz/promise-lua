@@ -2,7 +2,7 @@
 [Promises/A+](https://promisesaplus.com/) implemented in Lua language.
 
 ## Installation
-You cant install promise-lua using [LuaRocks](https://luarocks.org/modules/pyericz/promise-lua):
+You can install promise-lua using [LuaRocks](https://luarocks.org/modules/pyericz/promise-lua):
 ```
 $ luarocks install promise-lua
 ```
