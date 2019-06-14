@@ -23,3 +23,6 @@ end):finally(function()
   print('all done')
 end)
 ```
+
+## License
+[MIT License](https://github.com/pyericz/promise-lua/blob/master/LICENSE)
