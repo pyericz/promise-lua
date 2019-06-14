@@ -31,9 +31,7 @@ local function execFulfilled(thenInfo, value)
     else
         local success, ret = pcall(n.onFulfilled, value)
         if success then
-            -- if ret then
-                resolve(n.promise, ret)
-            -- end
+            resolve(n.promise, ret)
         else
             promiseOnRejected(n.promise, ret)
         end
@@ -47,9 +45,7 @@ local function execRejected(thenInfo, reason)
     else
         local success, ret = pcall(n.onRejected, reason)
         if success then
-            -- if ret then
-                resolve(n.promise, ret)
-            -- end
+            resolve(n.promise, ret)
         else
             promiseOnRejected(n.promise, ret)
         end
