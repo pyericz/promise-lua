@@ -16,10 +16,16 @@ Promise(function(resolve, reject)
     end
   end, 1000)
 end):thenCall(function(value)
+
   print('an even number', value)
+
 end):catch(function(value)
+
   print('an odd number', value)
+
 end):finally(function()
+
   print('all done')
+
 end)
 ```
