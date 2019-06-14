@@ -22,11 +22,15 @@ Promise(function(resolve, reject)
       reject(errMsg)
     end
   end, 1000)
-end):thenCall(function(value)
+end
+)
+:thenCall(function(value)
   print('an even number', value)
-end):catch(function(err)
+end)
+:catch(function(err)
   print(err)
-end):finally(function()
+end)
+:finally(function()
   print('all done')
 end)
 ```
