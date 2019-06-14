@@ -1,5 +1,5 @@
 # promise-lua
-[Promises/A+](https://promisesaplus.com/) implemented with Lua language.
+[Promises/A+](https://promisesaplus.com/) implemented in Lua language.
 
 ## Usage
 ```lua
