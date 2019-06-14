@@ -18,7 +18,7 @@ Promise(function(resolve, reject)
     if num % 2 == 0 then
       resolve(num)
     else
-      local errMsg = string.format('Error: expect an even number, but get %d', num)
+      local errMsg = string.format('[ERROR] Expect an even number, but get %d', num)
       reject(errMsg)
     end
   end, 1000)
