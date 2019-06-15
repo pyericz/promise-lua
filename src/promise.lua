@@ -75,7 +75,7 @@ promiseOnRejected = function (promise, reason)
 end
 
 
-local function handleThenable(promise, x)
+local function resolveThenable(promise, x)
     local thenCall = x.thenCall
     if type(thenCall) == 'function' then
         local isCalled = false
@@ -112,9 +112,9 @@ resolve = function (promise, x)
         if x.state == PENDING then
             promise.state = PENDING
         end
-        handleThenable(promise, x)
+        resolveThenable(promise, x)
     elseif isThenable(x) then
-        handleThenable(promise, x)
+        resolveThenable(promise, x)
     else
         promiseOnFulfilled(promise, x)
     end
