@@ -9,7 +9,7 @@ $ luarocks install promise-lua
 
 ## Usage
 To create `Promise` object, simply use `Promise.new(func)` in which `func` is of following form:
-```
+```lua
 function (resolve, reject)
     -- Do any async or sync operations.
     -- when success, call `resolve`,
