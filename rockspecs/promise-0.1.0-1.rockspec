@@ -2,6 +2,7 @@ package = "promise"
 version = "0.1.0-1"
 source = {
     url = "git+https://github.com/pyericz/promise-lua",
+    tag = "v0.1.0"
 }
 description = {
     summary = "Promises/A+ implemented in Lua language.",
