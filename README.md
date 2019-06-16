@@ -1,5 +1,5 @@
 # promise-lua
-[Promises/A+](https://promisesaplus.com/) implemented in Lua language.
+promise-lua is an es6 Promise mechanism in Lua, with the exception that `then` function is replaced by `thenCall` since `then` is a keyword of Lua languange.
 
 ## Installation
 You can install promise-lua using [LuaRocks](https://luarocks.org/modules/pyericz/promise-lua):
@@ -9,6 +9,41 @@ $ luarocks install promise-lua
 
 ## Usage
 ### Basic usages
+To create `Promise` instance, simply use `Promise.new(func)` in which `func` is of following form:
+```
+function (resolve, reject)
+    -- Do any async or sync operations.
+    -- when success, call `resolve`,
+    -- when failed, call `reject`
+end
+```
+
+`Promise(func)` is a shorthand of `Promise.new(func)`. After create, do `thenCall` to actually resolve or reject.
+```lua
+local p = ... -- p is a Promise instance
+p:thenCall(function (value)
+    -- resolved with value
+end, fuction (reason)
+    -- rejected with reason
+end)
+```
+
+Since `thenCall` returns a new Promise instance, you can chain multiple `thenCall` as following:
+```lua
+local p = ... -- p is a Promise instance
+p:thenCall(function (value)
+    -- resolved with value
+    return value
+end, fuction (reason)
+    -- rejected with reason
+end)
+:thenCall(function (value)
+    -- resolve from last resolve result
+end)
+```
+
+There are more methods defined in Promise instance, like `catch` and `finally`. For more information, please check out this [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Here is a full basic usage example.
+
 ```lua
 Promise(function(resolve, reject)
     -- do stuff after 1000 milliseconds.
