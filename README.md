@@ -8,8 +8,7 @@ $ luarocks install promise-lua
 ```
 
 ## Usage
-### Basic usages
-To create `Promise` instance, simply use `Promise.new(func)` in which `func` is of following form:
+To create `Promise` object, simply use `Promise.new(func)` in which `func` is of following form:
 ```
 function (resolve, reject)
     -- Do any async or sync operations.
@@ -20,7 +19,7 @@ end
 
 `Promise(func)` is a shorthand of `Promise.new(func)`. After create, do `thenCall` to actually resolve or reject.
 ```lua
-local p = ... -- p is a Promise instance
+local p = ... -- p is a Promise object 
 p:thenCall(function (value)
     -- resolved with value
 end, fuction (reason)
@@ -28,9 +27,9 @@ end, fuction (reason)
 end)
 ```
 
-Since `thenCall` returns a new Promise instance, you can chain multiple `thenCall` as following:
+Since `thenCall` returns a new Promise object, you can chain multiple `thenCall` as following:
 ```lua
-local p = ... -- p is a Promise instance
+local p = ... -- p is a Promise object
 p:thenCall(function (value)
     -- resolved with value
     return value
@@ -42,7 +41,7 @@ end)
 end)
 ```
 
-There are more methods defined in Promise instance, like `catch` and `finally`. For more information, please check out this [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Here is a full basic usage example.
+There are more methods defined in Promise object, like `catch` and `finally`. For more information, please check out this [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Here is a full basic usage example.
 
 ```lua
 Promise(function(resolve, reject)
@@ -70,7 +69,10 @@ end)
 end)
 ```
 
+## More methods
+
 ### Promise.resolve
+Returns a new Promise object that is resolved with the given value. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve). 
 ```lua
 local p = Promise.resolve(3)
 :thenCall(function(value)
@@ -98,6 +100,7 @@ Output:
 ```
 
 ### Promise.reject
+Returns a new Promise object that is rejected with the given reason. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)
 ```lua
 Promise.reject('[ERROR] this is an error msg')
 :catch(function(reason)
@@ -111,6 +114,7 @@ Output:
 ```
 
 ### Promise.race
+Wait until any of the promises is resolved or rejected. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race)
 ```lua
 local p1 = Promise.resolve(3)
 
@@ -134,6 +138,7 @@ Output:
 ```
 
 ### Promise.all
+Wait for all promises to be resolved, or for any to be rejected. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)
 ```lua
 local p1 = Promise.resolve(3)
 
