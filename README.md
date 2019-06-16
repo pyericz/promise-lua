@@ -41,8 +41,9 @@ end)
 end)
 ```
 
-There are more methods defined in Promise object, like `catch` and `finally`. For more information, please check out this [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Here is a full basic usage example.
+There are more methods defined in Promise object, like `catch` and `finally`. For more information, please check out this [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). 
 
+Here is a full basic usage example.
 ```lua
 Promise(function(resolve, reject)
     -- do stuff after 1000 milliseconds.
