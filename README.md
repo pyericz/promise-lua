@@ -159,7 +159,9 @@ end)
     print('first one rejected!')
 end)
 
-local p4 = Promise.reject('[ERROR]')
+local p4 = Promise(function (resolve, reject)
+    setTimeout(reject, 2000, '[ERROR]')
+end)
 
 Promise.all({p1, p2, p3, p4})
 :thenCall(function (value)
