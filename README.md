@@ -100,7 +100,7 @@ Output:
 ```
 
 ### Promise.reject
-Returns a new Promise object that is rejected with the given reason. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)
+Returns a new Promise object that is rejected with the given reason. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject).
 ```lua
 Promise.reject('[ERROR] this is an error msg')
 :catch(function(reason)
@@ -114,7 +114,7 @@ Output:
 ```
 
 ### Promise.race
-Wait until any of the promises is resolved or rejected. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race)
+Wait until any of the promises is resolved or rejected. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race).
 ```lua
 local p1 = Promise.resolve(3)
 
@@ -138,7 +138,7 @@ Output:
 ```
 
 ### Promise.all
-Wait for all promises to be resolved, or for any to be rejected. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)
+Wait for all promises to be resolved, or for any to be rejected. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
 ```lua
 local p1 = Promise.resolve(3)
 
