@@ -74,7 +74,7 @@ end)
     print('all done')
 end)
 ```
-The `thenCall` branch will be executed if the generated integer is even, otherwise the `catch` branch. No matter what branch is executed, the function defined in `finally` will eventually be called.
+The `thenCall` branch will be executed if the generated integer is even, otherwise the `catch` branch will be. No matter what branch is executed, the function defined in `finally` will eventually be called.
 
 ## More methods
 
