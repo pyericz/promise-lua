@@ -104,11 +104,11 @@ local function resolveThenable(p, x)
 end
 
 --[[
-    define p resolution procedure
+    define promise resolution procedure
 --]]
 resolve = function (p, x)
     if p == x then
-        promiseOnRejected(p, 'TypeError')
+        promiseOnRejected(p, 'TypeError: Promise resolution procedure got two identical parameters.')
         return
     end
     if isPromise(x) then
@@ -225,7 +225,7 @@ function Promise.resolve(value)
             end)
         else
             return newPromise(function(_, onRejected)
-                onRejected('TypeError')
+                onRejected(string.format('TypeError: thenCall must be a function (a %s value)', type(thenCall)))
             end)
         end
     end
@@ -240,8 +240,8 @@ function Promise.reject(value)
 end
 
 function Promise.race(values)
-    assert(type(values) == 'table', 'Promise.race needs an table')
-    assert(next(values) ~= nil, 'An empty table')
+    assert(type(values) == 'table', string.format('Promise.race needs an table (a %s value)', type(values)))
+    assert(next(values) ~= nil, 'No candidates available for racing.')
     return newPromise(function(onFulfilled, onRejected)
         for _, value in pairs(values) do
             Promise.resolve(value):thenCall(onFulfilled, onRejected)
@@ -250,7 +250,7 @@ function Promise.race(values)
 end
 
 function Promise.all(array)
-    assert(type(array) == 'table', 'Promise.all needs an array')
+    assert(type(array) == 'table', string.format('Promise.all needs an array table (a %s value)', type(array)))
     local args = {}
     for i=1, #array do
         args[i] = array[i]
