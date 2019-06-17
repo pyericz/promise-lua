@@ -59,8 +59,7 @@ Promise(function(resolve, reject)
             reject(errMsg)
         end
     end, 1000)
-end
-)
+end)
 :thenCall(function(value)
     print('an even number', value)
 end)
