@@ -48,7 +48,7 @@ Here is a full basic usage example. Suppose there exists a function called `setT
 -- Note that all the parameters after `func` are passed to the `func` as its parameters.
 setTimeout(milliseconds, func, ...)
 ```
-Now we generate a random integer. If the generated integer is even, we `resolve` with it. Otherwise, we reject it with an error message. 
+Now we generate a random integer. If the integer is even, we `resolve` with it. Otherwise, we reject it with an error message. 
 ```lua
 local Promise = require 'promise'
 
@@ -74,7 +74,7 @@ end)
     print('all done')
 end)
 ```
-The `thenCall` branch will be executed if the generated integer is even, otherwise the `catch` branch will be. No matter what branch is executed, the function defined in `finally` will eventually be called.
+The `thenCall` branch will be executed if the integer is even, otherwise the `catch` branch will be. No matter what branch is executed, the function defined in `finally` will eventually be called.
 
 ## More methods
 
