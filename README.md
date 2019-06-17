@@ -25,6 +25,15 @@ p:thenCall(function (value)
 end, function (reason)
     -- rejected with reason
 end)
+
+-- Equivalent to
+local p = ... -- p is a Promise object 
+p:thenCall(function (value)
+    -- resolved with value
+end)
+:catch(function (reason)
+    -- rejected with reason
+end)
 ```
 
 Since `thenCall` returns a new Promise object, you can chain multiple `thenCall` as following:
