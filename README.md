@@ -44,7 +44,7 @@ p:thenCall(function (value)
     return value
 end)
 :thenCall(function (value)
-    -- resolve from last resolve result
+    -- resolve from last resolved result
 end)
 ```
 
