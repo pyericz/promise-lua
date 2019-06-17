@@ -43,12 +43,16 @@ end)
 
 There are more methods defined in Promise object, like `catch` and `finally`. For more information, please check out this [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). 
 
-Here is a full basic usage example.
+Here is a full basic usage example. Suppose there exists a function called `setTimeout`, which calls a function or evaluates an expression after a specified number of milliseconds.
+```lua
+-- Note that all the parameters after `func` are passed to the `func` as its parameters.
+setTimeout(milliseconds, func, ...)
+```
+Now we generate a random integer. If the generated integer is even, we `resolve` with it. Otherwise, we reject it with an error message. 
 ```lua
 local Promise = require 'promise'
 
 Promise(function(resolve, reject)
-    -- do stuff after 1000 milliseconds.
     setTimeout(1000, function()
         math.randomseed(os.time())
         local num = math.random(10)
@@ -70,6 +74,7 @@ end)
     print('all done')
 end)
 ```
+The `thenCall` will be called if the generated integer is even, otherwise `catch` will be called. The `finally` will be called in the end, no matter it is resolved or rejected.
 
 ## More methods
 
