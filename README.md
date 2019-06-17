@@ -45,6 +45,8 @@ There are more methods defined in Promise object, like `catch` and `finally`. Fo
 
 Here is a full basic usage example.
 ```lua
+local Promise = require 'promise'
+
 Promise(function(resolve, reject)
     -- do stuff after 1000 milliseconds.
     setTimeout(function()
@@ -75,6 +77,8 @@ end)
 ### Promise.resolve
 Returns a new Promise object that is resolved with the given value. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve). 
 ```lua
+local Promise = require 'promise'
+
 local p = Promise.resolve(3)
 :thenCall(function(value)
     print('promise resolve a value: ', value)
@@ -103,6 +107,8 @@ Output:
 ### Promise.reject
 Returns a new Promise object that is rejected with the given reason. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject).
 ```lua
+local Promise = require 'promise'
+
 Promise.reject('[ERROR] this is an error msg')
 :catch(function(reason)
     print('catch an error: ', reason)
@@ -117,6 +123,8 @@ Output:
 ### Promise.race
 Wait until any of the promises is resolved or rejected. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race).
 ```lua
+local Promise = require 'promise'
+
 local p1 = Promise.resolve(3)
 
 local p2 = Promise(function (resolve, reject)
@@ -141,6 +149,8 @@ Output:
 ### Promise.all
 Wait for all promises to be resolved, or for any to be rejected. For more information, checkout [doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
 ```lua
+local Promise = require 'promise'
+
 local p1 = Promise.resolve(3)
 
 local p2 = Promise(function (resolve, reject)
