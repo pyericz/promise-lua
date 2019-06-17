@@ -22,7 +22,7 @@ end
 local p = ... -- p is a Promise object 
 p:thenCall(function (value)
     -- resolved with value
-end, fuction (reason)
+end, function (reason)
     -- rejected with reason
 end)
 ```
@@ -33,7 +33,7 @@ local p = ... -- p is a Promise object
 p:thenCall(function (value)
     -- resolved with value
     return value
-end, fuction (reason)
+end, function (reason)
     -- rejected with reason
 end)
 :thenCall(function (value)
