@@ -12,8 +12,8 @@ To create `Promise` object, simply use `Promise.new(func)` in which `func` is of
 ```lua
 function (resolve, reject)
     -- Do any async or sync operations.
-    -- when success, call `resolve`,
-    -- when failed, call `reject`
+    -- When success, call `resolve`.
+    -- When failed, call `reject`.
 end
 ```
 
@@ -49,7 +49,7 @@ local Promise = require 'promise'
 
 Promise(function(resolve, reject)
     -- do stuff after 1000 milliseconds.
-    setTimeout(function()
+    setTimeout(1000, function()
         math.randomseed(os.time())
         local num = math.random(10)
         if num % 2 == 0 then
@@ -58,7 +58,7 @@ Promise(function(resolve, reject)
             local errMsg = string.format('[ERROR] Expect an even number, but get %d', num)
             reject(errMsg)
         end
-    end, 1000)
+    end)
 end)
 :thenCall(function(value)
     print('an even number', value)
@@ -127,11 +127,11 @@ local Promise = require 'promise'
 local p1 = Promise.resolve(3)
 
 local p2 = Promise(function (resolve, reject)
-    setTimeout(resolve, 1000, true)
+    setTimeout(1000, resolve, true)
 end)
 
 local p3 = Promise(function (resolve, reject)
-    setTimeout(resolve, 2000, 'hello')
+    setTimeout(2000, resolve, 'hello')
 end)
 
 Promise.race({p1, p2, p3})
@@ -153,11 +153,11 @@ local Promise = require 'promise'
 local p1 = Promise.resolve(3)
 
 local p2 = Promise(function (resolve, reject)
-    setTimeout(resolve, 1000, true)
+    setTimeout(1000, resolve, true)
 end)
 
 local p3 = Promise(function (resolve, reject)
-    setTimeout(resolve, 2000, 'hello')
+    setTimeout(2000, resolve, 'hello')
 end)
 
 Promise.all({p1, p2, p3})
@@ -169,7 +169,7 @@ end)
 end)
 
 local p4 = Promise(function (resolve, reject)
-    setTimeout(reject, 2000, '[ERROR]')
+    setTimeout(2000, reject, '[ERROR]')
 end)
 
 Promise.all({p1, p2, p3, p4})
