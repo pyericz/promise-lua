@@ -10,6 +10,14 @@ end
 
 local promise = {}
 
+function promise.__tostring(p)
+    local __tostring = promise.__tostring
+    promise.__tostring = nil
+    local str =  string.format('Promise: %s', tostring(p):sub(8))
+    promise.__tostring = __tostring
+    return str
+end
+
 local newPromise
 local resolve
 local promiseOnFulfilled
