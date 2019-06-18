@@ -64,10 +64,10 @@ local function execRejected(thenInfo, reason)
 end
 
 promiseOnFulfilled = function (p, value)
-    if p.state == PENDING then
-        p.value = value
-        p.reason = nil
-        p.state = FULFILLED
+    if p._state == PENDING then
+        p._value = value
+        p._reason = nil
+        p._state = FULFILLED
     end
     for _,n in ipairs(p.thenInfoList) do
         execFulfilled(n, value)
@@ -75,10 +75,10 @@ promiseOnFulfilled = function (p, value)
 end
 
 promiseOnRejected = function (p, reason)
-    if p.state == PENDING then
-        p.value = nil
-        p.reason = reason
-        p.state = REJECTED
+    if p._state == PENDING then
+        p._value = nil
+        p._reason = reason
+        p._state = REJECTED
     end
     for _,n in ipairs(p.thenInfoList) do
         execRejected(n, reason)
@@ -120,8 +120,8 @@ resolve = function (p, x)
         return
     end
     if isPromise(x) then
-        if x.state == PENDING then
-            p.state = PENDING
+        if x._state == PENDING then
+            p._state = PENDING
         end
         resolveThenable(p, x)
     elseif isThenable(x) then
@@ -137,9 +137,9 @@ function promise:new()
     setmetatable(p, self)
     self.__index = self
     p.thenInfoList = {}
-    p.state = PENDING
-    p.value = nil
-    p.reason = nil
+    p._state = PENDING
+    p._value = nil
+    p._reason = nil
 
     return p
 end
@@ -159,10 +159,10 @@ function promise:thenCall(onFulfilled, onRejected)
     end
 
 
-    if self.state == FULFILLED then
-        execFulfilled(thenInfo, self.value)
-    elseif self.state == REJECTED then
-        execRejected(thenInfo, self.reason)
+    if self._state == FULFILLED then
+        execFulfilled(thenInfo, self._value)
+    elseif self._state == REJECTED then
+        execRejected(thenInfo, self._reason)
     end
 
     table.insert(self.thenInfoList, thenInfo)
@@ -217,9 +217,9 @@ Promise.new = newPromise
 
 local function newPromiseFromValue(value)
     local p = newPromise(noop)
-    p.state = FULFILLED
-    p.value = value
-    p.reason = nil
+    p._state = FULFILLED
+    p._value = value
+    p._reason = nil
     return p
 end
 
@@ -270,11 +270,11 @@ function Promise.all(array)
         local function res(i, val)
             if val then
                 if isPromise(val) then
-                    if val.state == FULFILLED then
-                        return res(i, val.value)
+                    if val._state == FULFILLED then
+                        return res(i, val._value)
                     end
-                    if val.state == REJECTED then
-                        onRejected(val.reason)
+                    if val._state == REJECTED then
+                        onRejected(val._reason)
                     end
                     val:thenCall(function (v)
                         res(i, v)
