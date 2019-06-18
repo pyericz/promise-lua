@@ -1,6 +1,6 @@
-local PENDING = 'pending'
-local FULFILLED = 'fulfilled'
-local REJECTED = 'rejected'
+local PENDING = 'PENDING'
+local FULFILLED = 'FULFILLED'
+local REJECTED = 'REJECTED'
 
 local function noop() end
 
