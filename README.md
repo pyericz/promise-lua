@@ -199,6 +199,29 @@ Output:
 --]]
 ```
 
+### Promise.serial
+*This is still in verification phase, so use at your own risk.*
+Since promise runs immediately when created, it is impossible to run created promises one by one. However, it is possible to run created tasks one by one. To do so, we create multiple task functions, which parameters are `resolve` and `reject` functions, as follows:
+```lua
+-- Task 1
+local t1 = function (resolve, reject)
+    setTimeout(1000, resolve, true)
+end
+
+-- Task 2
+local t2 = function (resolve, reject)
+    setTimeout(2000, resolve, 'hello')
+end
+```
+Now we pass all those defined tasks to `Promise.serial`, and they will be done one by one.
+```lua
+local Promise = require 'promise'
+
+Promise.serial({t1, t2})
+:thenCall(function()
+    print('all done')
+end)
+```
 
 ## License
 [MIT License](https://github.com/pyericz/promise-lua/blob/master/LICENSE)
