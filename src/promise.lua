@@ -327,4 +327,58 @@ function Promise.all(array)
     end)
 end
 
+function Promise.serial(array)
+    assert(type(array) == 'table', string.format('Promise.serial needs an array table (a %s value)', type(array)))
+    local args = {}
+    for i=1, #array do
+        args[i] = array[i]
+    end
+
+    return newPromise(function (onFulfilled, onRejected)
+        if #args == 0 then return onFulfilled({}) end
+        local remaining = #args
+        local function res(i, val)
+            if isPromise(val) then
+                if val._state == FULFILLED then
+                    return res(i, val._value)
+                end
+                if val._state == REJECTED then
+                    onRejected(val._reason)
+                end
+                val:thenCall(function (v)
+                    res(i, v)
+                end, onRejected)
+                return
+            elseif isThenable(val) then
+                local thenCall = val.thenCall
+                if type(thenCall) == 'function' then
+                    local p = newPromise(function(r, rj)
+                        val:thenCall(r, rj)
+                    end)
+                    p:thenCall(function (v)
+                        res(i, v)
+                    end, onRejected)
+                    return
+                end
+            end
+            args[i] = val
+            remaining = remaining - 1
+            if remaining == 0 then
+                onFulfilled(args)
+            else
+                if type(args[i+1]) == 'function' then
+                    res(i+1, newPromise(args[i+1]))
+                else
+                    res(i+1, args[i+1])
+                end
+            end
+        end
+        if type(args[1]) == 'function' then
+            res(1, newPromise(args[1]))
+        else
+            res(1, args[1])
+        end
+    end)
+end
+
 return Promise
