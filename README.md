@@ -1,5 +1,5 @@
 # promise-lua
-promise-lua is an es6 Promise mechanism in Lua, with the exception that `then` function is replaced by `thenCall` since `then` is a keyword of Lua languange.
+promise-lua is an es6-javascript Promise mechanism implemented by Lua, with the exception that `then` function is replaced by `thenCall` since `then` is a keyword of Lua languange.
 
 ## Installation
 You can install promise-lua using [LuaRocks](https://luarocks.org/modules/pyericz/promise-lua):
