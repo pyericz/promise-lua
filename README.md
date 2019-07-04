@@ -200,7 +200,7 @@ Output:
 ```
 
 ### Promise.serial
-**This is still in verification phase, so use at your own risk.**
+**WARNING: This is still in verification phase, so use at your own risk.**
 
 Since promise runs immediately when created, it is impossible to run created promises one by one. However, created tasks have no such limitation. To do so, we create multiple task functions, which parameters are `resolve` and `reject` functions,  as follows:
 ```lua
