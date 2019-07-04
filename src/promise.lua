@@ -292,29 +292,27 @@ function Promise.all(array)
         if #args == 0 then return onFulfilled({}) end
         local remaining = #args
         local function res(i, val)
-            if val then
-                if isPromise(val) then
-                    if val._state == FULFILLED then
-                        return res(i, val._value)
-                    end
-                    if val._state == REJECTED then
-                        onRejected(val._reason)
-                    end
-                    val:thenCall(function (v)
+            if isPromise(val) then
+                if val._state == FULFILLED then
+                    return res(i, val._value)
+                end
+                if val._state == REJECTED then
+                    onRejected(val._reason)
+                end
+                val:thenCall(function (v)
+                    res(i, v)
+                end, onRejected)
+                return
+            elseif isThenable(val) then
+                local thenCall = val.thenCall
+                if type(thenCall) == 'function' then
+                    local p = newPromise(function(r, rj)
+                        val:thenCall(r, rj)
+                    end)
+                    p:thenCall(function (v)
                         res(i, v)
                     end, onRejected)
                     return
-                elseif isThenable(val) then
-                    local thenCall = val.thenCall
-                    if type(thenCall) == 'function' then
-                        local p = newPromise(function(r, rj)
-                            val:thenCall(r, rj)
-                        end)
-                        p:thenCall(function (v)
-                            res(i, v)
-                        end, onRejected)
-                        return
-                    end
                 end
             end
             args[i] = val
