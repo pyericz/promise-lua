@@ -49,11 +49,13 @@ local promiseOnRejected
 
 local function isPromise(x)
     if type(x) ~= 'table' then return false end
+    local mtSeen = {}
     local mt = getmetatable(x)
-    while mt ~= nil do
+    while mt ~= nil and not mtSeen[mt] do
         if mt == promise then
             return true
         end
+        mtSeen[mt] = true
         mt = getmetatable(mt)
     end
     return false
