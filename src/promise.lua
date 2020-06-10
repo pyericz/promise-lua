@@ -28,6 +28,10 @@ local REJECTED = 'REJECTED'
 
 local function noop() end
 
+local function isCallable(x)
+    return type(x) == 'function' or not not (getmetatable(x) and getmetatable(x).__call)
+end
+
 local function isThenable(x)
     return type(x) == 'table' and x.thenCall ~= nil
 end
@@ -61,7 +65,7 @@ end
 
 local function execFulfilled(thenInfo, value)
     local n = thenInfo
-    if type(n.onFulfilled) ~= 'function' then
+    if not isCallable(n.onFulfilled) then
         promiseOnFulfilled(n.promise, value)
     else
         local success, ret = pcall(n.onFulfilled, value)
@@ -75,7 +79,7 @@ end
 
 local function execRejected(thenInfo, reason)
     local n = thenInfo
-    if type(n.onRejected) ~= 'function' then
+    if not isCallable(n.onRejected) then
         promiseOnRejected(n.promise, reason)
     else
         local success, ret = pcall(n.onRejected, reason)
@@ -112,7 +116,7 @@ end
 
 local function resolveThenable(p, x)
     local thenCall = x.thenCall
-    if type(thenCall) == 'function' then
+    if isCallable(thenCall) then
         local isCalled = false
         local function resolvePromise(y)
             if isCalled then return end
@@ -175,10 +179,10 @@ function promise:thenCall(onFulfilled, onRejected)
         promise = p,
     }
 
-    if type(onFulfilled) == 'function' then
+    if isCallable(onFulfilled) then
         thenInfo.onFulfilled = onFulfilled
     end
-    if type(onRejected) == 'function' then
+    if isCallable(onRejected) then
         thenInfo.onRejected = onRejected
     end
 
@@ -224,7 +228,7 @@ newPromise = function (func)
         promiseOnRejected(obj, reason)
     end
 
-    if type(func) == 'function' then
+    if isCallable(func) then
         func(onFulfilled, onRejected)
     end
     return obj
@@ -251,7 +255,7 @@ function Promise.resolve(value)
     if isPromise(value) then return value end
     if isThenable(value) then
         local thenCall = value.thenCall
-        if type(thenCall) == 'function' then
+        if isCallable(thenCall) then
             return newPromise(function(onFulfilled, onRejected)
                 value:thenCall(onFulfilled, onRejected)
             end)
@@ -305,7 +309,7 @@ function Promise.all(array)
                 return
             elseif isThenable(val) then
                 local thenCall = val.thenCall
-                if type(thenCall) == 'function' then
+                if isCallable(thenCall) then
                     local p = newPromise(function(r, rj)
                         val:thenCall(r, rj)
                     end)
@@ -351,7 +355,7 @@ function Promise.serial(array)
                 return
             elseif isThenable(val) then
                 local thenCall = val.thenCall
-                if type(thenCall) == 'function' then
+                if isCallable(thenCall) then
                     local p = newPromise(function(r, rj)
                         val:thenCall(r, rj)
                     end)
@@ -366,14 +370,14 @@ function Promise.serial(array)
             if remaining == 0 then
                 onFulfilled(args)
             else
-                if type(args[i+1]) == 'function' then
+                if isCallable(args[i+1]) then
                     res(i+1, newPromise(args[i+1]))
                 else
                     res(i+1, args[i+1])
                 end
             end
         end
-        if type(args[1]) == 'function' then
+        if isCallable(args[1]) then
             res(1, newPromise(args[1]))
         else
             res(1, args[1])
