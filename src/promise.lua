@@ -204,17 +204,6 @@ function promise:catch(onRejected)
     return self:thenCall(nil, onRejected)
 end
 
-function promise:finally(func)
-    return self:thenCall(
-        function ()
-            func()
-        end,
-        function ()
-            func()
-        end
-    )
-end
-
 newPromise = function (func)
     local obj = promise:new()
     local isCalled = false
@@ -275,6 +264,21 @@ function Promise.reject(value)
     return newPromise(function(_, onRejected)
         onRejected(value)
     end)
+end
+
+function promise:finally(func)
+    return self:thenCall(
+        function(value)
+            return Promise.resolve(func()):thenCall(function()
+                return Promise.resolve(value)
+            end)
+        end,
+        function(reason)
+            return Promise.resolve(func()):thenCall(function()
+                return Promise.reject(reason)
+            end)
+        end
+    )
 end
 
 function Promise.race(values)
