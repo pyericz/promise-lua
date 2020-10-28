@@ -50,6 +50,7 @@ local newPromise
 local resolve
 local promiseOnFulfilled
 local promiseOnRejected
+local onUnhandledPromiseRejection
 
 local function isPromise(x)
     if type(x) ~= 'table' then return false end
@@ -109,6 +110,7 @@ promiseOnRejected = function (p, reason)
         p._value = nil
         p._reason = reason
         p._state = REJECTED
+        p._rejectHandled = #p.thenInfoList > 0
     end
     for _,n in ipairs(p.thenInfoList) do
         execRejected(n, reason)
@@ -170,6 +172,14 @@ function promise:new()
     p._state = PENDING
     p._value = nil
     p._reason = nil
+    p._rejectHandled = nil
+
+    if newproxy then
+        -- With lua <= 5.1 and luajit, __gc is not called on table.
+        local proxy = newproxy(true)
+        getmetatable(proxy).__gc = function() p:__gc() end
+        p[proxy] = true
+    end
 
     return p
 end
@@ -192,6 +202,7 @@ function promise:thenCall(onFulfilled, onRejected)
     if self._state == FULFILLED then
         execFulfilled(thenInfo, self._value)
     elseif self._state == REJECTED then
+        self._rejectHandled = isCallable(onRejected)
         execRejected(thenInfo, self._reason)
     end
 
@@ -202,6 +213,14 @@ end
 
 function promise:catch(onRejected)
     return self:thenCall(nil, onRejected)
+end
+
+function promise:__gc()
+    if self._state == REJECTED and not self._rejectHandled then
+        if isCallable(onUnhandledPromiseRejection) then
+            onUnhandledPromiseRejection(self._reason)
+        end
+    end
 end
 
 newPromise = function (func)
@@ -389,6 +408,10 @@ function Promise.serial(array)
             res(1, args[1])
         end
     end)
+end
+
+function Promise.onUnhandledPromiseRejection(cb)
+    onUnhandledPromiseRejection = cb
 end
 
 return Promise
