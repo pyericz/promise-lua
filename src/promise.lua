@@ -26,6 +26,9 @@ local PENDING = 'PENDING'
 local FULFILLED = 'FULFILLED'
 local REJECTED = 'REJECTED'
 
+-- Compatibility trick
+local unpack = unpack or table.unpack
+
 local function noop() end
 
 local function isCallable(x)
@@ -51,6 +54,8 @@ local resolve
 local promiseOnFulfilled
 local promiseOnRejected
 
+local function parsePCall(success, ...) return success, {...} end
+
 local function isPromise(x)
     if type(x) ~= 'table' then return false end
     local mtSeen = {}
@@ -65,56 +70,55 @@ local function isPromise(x)
     return false
 end
 
-local function execFulfilled(thenInfo, value)
+local function execFulfilled(thenInfo, ...)
     local n = thenInfo
     if not isCallable(n.onFulfilled) then
-        promiseOnFulfilled(n.promise, value)
+        promiseOnFulfilled(n.promise, ...)
     else
-        local success, ret = pcall(n.onFulfilled, value)
+        local success, ret = parsePCall(pcall(n.onFulfilled, ...))
         if success then
-            resolve(n.promise, ret)
+            resolve(n.promise, unpack(ret))
         else
-            promiseOnRejected(n.promise, ret)
+            promiseOnRejected(n.promise, unpack(ret))
         end
     end
 end
 
-local function execRejected(thenInfo, reason)
+local function execRejected(thenInfo, ...)
     local n = thenInfo
     if not isCallable(n.onRejected) then
-        promiseOnRejected(n.promise, reason)
+        promiseOnRejected(n.promise, ...)
     else
-        local success, ret = pcall(n.onRejected, reason)
+        local success, ret = parsePCall(pcall(n.onRejected, ...))
         if success then
-            resolve(n.promise, ret)
+            resolve(n.promise, unpack(ret))
         else
-            promiseOnRejected(n.promise, ret)
+            promiseOnRejected(n.promise, unpack(ret))
         end
     end
 end
 
-promiseOnFulfilled = function (p, value)
+promiseOnFulfilled = function(p, ...)
     if p._state == PENDING then
-        p._value = value
+        p._value = {...}
         p._reason = nil
         p._state = FULFILLED
     end
-    for _,n in ipairs(p.thenInfoList) do
-        execFulfilled(n, value)
+    for _, n in ipairs(p.thenInfoList) do
+        execFulfilled(n, ...)
     end
 end
 
-promiseOnRejected = function (p, reason)
+promiseOnRejected = function(p, ...)
     if p._state == PENDING then
         p._value = nil
-        p._reason = reason
+        p._reason = {...}
         p._state = REJECTED
     end
-    for _,n in ipairs(p.thenInfoList) do
-        execRejected(n, reason)
+    for _, n in ipairs(p.thenInfoList) do
+        execRejected(n, ...)
     end
 end
-
 
 local function resolveThenable(p, x)
     local thenCall = x.thenCall
@@ -144,7 +148,7 @@ end
 --[[
     define promise resolution procedure
 --]]
-resolve = function (p, x)
+resolve = function(p, x)
     if p == x then
         promiseOnRejected(p, 'TypeError: Promise resolution procedure got two identical parameters.')
         return
@@ -190,9 +194,9 @@ function promise:thenCall(onFulfilled, onRejected)
 
 
     if self._state == FULFILLED then
-        execFulfilled(thenInfo, self._value)
+        execFulfilled(thenInfo, unpack(self._value))
     elseif self._state == REJECTED then
-        execRejected(thenInfo, self._reason)
+        execRejected(thenInfo, unpack(self._reason))
     end
 
     table.insert(self.thenInfoList, thenInfo)
@@ -204,19 +208,19 @@ function promise:catch(onRejected)
     return self:thenCall(nil, onRejected)
 end
 
-newPromise = function (func)
+newPromise = function(func)
     local obj = promise:new()
     local isCalled = false
-    local function onFulfilled(value)
+    local function onFulfilled(...)
         if isCalled then return end
         isCalled = true
-        promiseOnFulfilled(obj, value)
+        promiseOnFulfilled(obj, ...)
     end
 
-    local function onRejected(reason)
+    local function onRejected(...)
         if isCalled then return end
         isCalled = true
-        promiseOnRejected(obj, reason)
+        promiseOnRejected(obj, ...)
     end
 
     if isCallable(func) then
@@ -234,17 +238,18 @@ setmetatable(Promise, {
 
 Promise.new = newPromise
 
-local function newPromiseFromValue(value)
+local function newPromiseFromValue(...)
     local p = newPromise(noop)
     p._state = FULFILLED
-    p._value = value
+    p._value = {...}
     p._reason = nil
     return p
 end
 
-function Promise.resolve(value)
-    if isPromise(value) then return value end
-    if isThenable(value) then
+function Promise.resolve(...)
+    if isPromise(...) then return ... end
+    if isThenable(...) then
+        local value = arg[1]
         local thenCall = value.thenCall
         if isCallable(thenCall) then
             return newPromise(function(onFulfilled, onRejected)
@@ -256,26 +261,28 @@ function Promise.resolve(value)
             end)
         end
     end
-    return newPromiseFromValue(value)
+    return newPromiseFromValue(...)
 end
 
-
-function Promise.reject(value)
+function Promise.reject(...)
+    local args = {...}
     return newPromise(function(_, onRejected)
-        onRejected(value)
+        onRejected(unpack(args))
     end)
 end
 
 function promise:finally(func)
     return self:thenCall(
-        function(value)
+        function(...)
+            local value = {...}
             return Promise.resolve(func()):thenCall(function()
-                return Promise.resolve(value)
+                return Promise.resolve(unpack(value))
             end)
         end,
-        function(reason)
+        function(...)
+            local reason = {...}
             return Promise.resolve(func()):thenCall(function()
-                return Promise.reject(reason)
+                return Promise.reject(unpack(reason))
             end)
         end
     )
@@ -304,10 +311,10 @@ function Promise.all(array)
         local function res(i, val)
             if isPromise(val) then
                 if val._state == FULFILLED then
-                    return res(i, val._value)
+                    return res(i, unpack(val._value))
                 end
                 if val._state == REJECTED then
-                    onRejected(val._reason)
+                    onRejected(unpack(val._reason))
                 end
                 val:thenCall(function (v)
                     res(i, v)
